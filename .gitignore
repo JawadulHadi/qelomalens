@@ -16,3 +16,6 @@ supabase/.temp
 
 # npm lockfile — bun.lock is canonical for this project
 package-lock.json
+
+.vercel
+.env*
