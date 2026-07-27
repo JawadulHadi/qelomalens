@@ -14,7 +14,8 @@ export async function normalizePdf(
     const result = await pdfParse(buffer);
     extractedText = result.text || '';
     pageCount = result.numpages || 1;
-  } catch (err) {
+  } catch (err: any) {
+    console.warn('[normalizePdf] pdf-parse failed, falling back to raw ASCII scraping:', err?.message || err);
     // If pdf-parse fails on binary/corrupt PDF, extract printable ASCII text strings
     const str = buffer.toString('binary');
     const matches = str.match(/[\x20-\x7E\s]{4,}/g);

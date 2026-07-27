@@ -12,7 +12,8 @@ export async function normalizeDocx(
   try {
     const result = await mammoth.extractRawText({ buffer });
     extractedText = result.value || '';
-  } catch (err) {
+  } catch (err: any) {
+    console.warn('[normalizeDocx] mammoth failed to extract text:', err?.message || err);
     extractedText = 'Failed to extract text from DOCX file';
   }
 
