@@ -1,4 +1,4 @@
-import { PDFParse } from 'pdf-parse';
+import pdfParse from 'pdf-parse';
 import { InputEnvelope, SourceInfo } from '../../common/types.js';
 
 export async function normalizePdf(
@@ -10,18 +10,15 @@ export async function normalizePdf(
   let extractedText = '';
   let pageCount = 1;
 
-  const parser = new PDFParse({ data: buffer });
   try {
-    const result = await parser.getText();
+    const result = await pdfParse(buffer);
     extractedText = result.text || '';
-    pageCount = result.total || 1;
+    pageCount = result.numpages || 1;
   } catch (err) {
     // If pdf-parse fails on binary/corrupt PDF, extract printable ASCII text strings
     const str = buffer.toString('binary');
     const matches = str.match(/[\x20-\x7E\s]{4,}/g);
     extractedText = matches ? matches.join(' ') : 'PDF binary content uploaded';
-  } finally {
-    await parser.destroy();
   }
 
   const base64 = buffer.toString('base64');
