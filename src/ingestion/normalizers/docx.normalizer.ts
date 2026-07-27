@@ -1,11 +1,5 @@
-import { createRequire } from 'module';
+import mammoth from 'mammoth';
 import { InputEnvelope, SourceInfo } from '../../common/types.js';
-
-const customRequire = typeof require !== 'undefined'
-  ? require
-  : createRequire(`file://${process.cwd()}/index.js`);
-
-const mammoth = customRequire('mammoth');
 
 export async function normalizeDocx(
   buffer: Buffer,
