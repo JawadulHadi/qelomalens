@@ -15,6 +15,12 @@ import { api } from './api/client.js';
 import { ShellMode, AppState, DocumentInfo, ChatMessage, ChatSession } from './types.js';
 import { MessageSquare, X, RotateCcw, History } from 'lucide-react';
 
+const titleCaseCapability = (id: string): string =>
+  id
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
 export default function App() {
   const [shell, setShell] = useState<ShellMode>('full-page');
   const [appState, setAppState] = useState<AppState>('empty');
@@ -146,7 +152,7 @@ export default function App() {
       const openingMsg: ChatMessage = {
         id: `msg_${Date.now()}`,
         role: 'ai',
-        content: summaryRes?.output?.summary || `Hello! I have successfully ingested ${envelope.source.name}. How can I assist you with analyzing this document today?`,
+        content: summaryRes?.output?.summary || `Got it — I've read through ${envelope.source.name}. Ask me anything about it, or try one of the quick actions below to dig in.`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         source: summaryRes?.source || 'gemini-2.5-flash',
         confidence: summaryRes?.confidence || 0.94,
@@ -195,7 +201,7 @@ export default function App() {
     const userMsg: ChatMessage = {
       id: `msg_user_${Date.now()}`,
       role: 'user',
-      content: `Please run the ${capabilityId} engine on this document.`,
+      content: `Run ${titleCaseCapability(capabilityId)} on this document.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
@@ -208,7 +214,7 @@ export default function App() {
       const aiMsg: ChatMessage = {
         id: `msg_ai_${Date.now()}`,
         role: 'ai',
-        content: `Here are the results from executing the ${capabilityId} capability engine:`,
+        content: `Here's what ${titleCaseCapability(capabilityId)} turned up:`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         source: res?.source || 'gemini-2.5-flash',
         confidence: res?.confidence || 0.92,
@@ -293,7 +299,7 @@ export default function App() {
       const resetMsg: ChatMessage = {
         id: `msg_reset_${Date.now()}`,
         role: 'ai',
-        content: `Conversation history cleared for ${activeDoc.name}. What would you like to examine next?`,
+        content: `Cleared! ${activeDoc.name} is still loaded — what would you like to look at next?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         source: 'gemini-2.5-flash',
         confidence: 0.99,

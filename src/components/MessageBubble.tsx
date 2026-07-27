@@ -1,6 +1,48 @@
 import React, { useState } from 'react';
-import { Copy, Check, Bot, User, Cpu, ShieldCheck, AlertTriangle, AlertOctagon } from 'lucide-react';
+import {
+  Copy,
+  Check,
+  Bot,
+  User,
+  ShieldCheck,
+  AlertTriangle,
+  AlertOctagon,
+  HelpCircle,
+  ListTree,
+  GitCompare,
+  ArrowRightCircle,
+} from 'lucide-react';
 import { ChatMessage } from '../types.js';
+import { KeyFactsCard } from './KeyFactsCard.js';
+
+const titleCase = (value: string): string =>
+  value
+    .replace(/[_-]+/g, ' ')
+    .split(' ')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
+const VERDICT_STYLES: Record<string, { badge: string; Icon: typeof ShieldCheck }> = {
+  correct: { badge: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30', Icon: ShieldCheck },
+  fair: { badge: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30', Icon: ShieldCheck },
+  concerning: { badge: 'bg-red-500/10 text-red-500 border-red-500/30', Icon: AlertOctagon },
+  compliant: { badge: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30', Icon: ShieldCheck },
+  insufficient_data: { badge: 'bg-amber-500/10 text-amber-600 border-amber-500/30', Icon: HelpCircle },
+};
+
+const PRIORITY_STYLES: Record<string, string> = {
+  high: 'bg-red-500/10 text-red-500 border-red-500/30',
+  medium: 'bg-amber-500/10 text-amber-600 border-amber-500/30',
+  low: 'bg-[var(--ol-surface)] text-[var(--ol-muted)] border-[var(--ol-border)]',
+};
+
+const DIFF_STATUS_STYLES: Record<string, string> = {
+  different: 'bg-amber-500/10 text-amber-600 border-amber-500/30',
+  match: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30',
+  same: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30',
+  informational: 'bg-[var(--ol-surface)] text-[var(--ol-muted)] border-[var(--ol-border)]',
+};
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -63,39 +105,184 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, onCitatio
 
     if (output.facts) {
       return (
-        <div className="flex flex-col gap-2">
-          <p className="text-xs font-semibold text-[var(--ol-brand)] dark:text-white">Extracted Key Facts:</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
-            {output.facts.map((fact: any, idx: number) => (
-              <div
-                key={idx}
-                onClick={() => onCitationClick && onCitationClick(fact.key)}
-                className="p-2 rounded bg-[var(--ol-surface)] border border-[var(--ol-border)] cursor-pointer hover:border-[var(--ol-accent)] transition-colors flex flex-col"
-              >
-                <span className="text-[10px] text-[var(--ol-muted)] uppercase">{fact.key}</span>
-                <span className="font-bold text-[var(--ol-brand)] dark:text-white mt-0.5">{fact.value}</span>
-              </div>
-            ))}
-          </div>
+        <div className="flex flex-col gap-3">
+          <KeyFactsCard facts={output.facts} onFactClick={onCitationClick} />
+          {output.entities && Array.isArray(output.entities) && output.entities.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {output.entities.map((entity: any, idx: number) => (
+                <span
+                  key={idx}
+                  className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--ol-surface)] border border-[var(--ol-border)] text-[var(--ol-muted)]"
+                >
+                  <span className="text-[var(--ol-brand)] font-semibold">{entity.name}</span> · {entity.type}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       );
     }
 
     if (output.verdict) {
+      const key = String(output.verdict).toLowerCase();
+      const style = VERDICT_STYLES[key] || VERDICT_STYLES.insufficient_data;
+      const VerdictIcon = style.Icon;
       return (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase px-2 py-0.5 rounded bg-[var(--ol-surface)] border border-[var(--ol-border)] font-mono">
-              Verdict: {output.verdict}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span
+              className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase px-2.5 py-1 rounded-full border ${style.badge}`}
+            >
+              <VerdictIcon className="w-3.5 h-3.5" />
+              {titleCase(String(output.verdict))}
             </span>
+            {typeof output.score === 'number' && (
+              <div className="flex items-center gap-2 text-[10px] text-[var(--ol-muted)] font-mono">
+                <div className="w-20 h-1.5 rounded-full overflow-hidden bg-[var(--ol-border)]">
+                  <div
+                    className="h-full bg-[var(--ol-accent)] transition-all duration-500"
+                    style={{ width: `${Math.round(output.score * 100)}%` }}
+                  />
+                </div>
+                <span>{Math.round(output.score * 100)}% score</span>
+              </div>
+            )}
           </div>
-          {output.reasons && (
+          {output.reasons && Array.isArray(output.reasons) && (
             <ul className="list-disc pl-5 text-xs flex flex-col gap-1 font-body text-[var(--ol-brand)] dark:text-gray-200">
               {output.reasons.map((reason: string, idx: number) => (
                 <li key={idx}>{reason}</li>
               ))}
             </ul>
           )}
+          {output.citations && Array.isArray(output.citations) && output.citations.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {output.citations.map((c: any, idx: number) => (
+                <span
+                  key={idx}
+                  className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--ol-surface)] border border-[var(--ol-border)] text-[var(--ol-muted)]"
+                >
+                  <span className="text-[var(--ol-brand)] font-semibold">{c.field}</span>: {c.value}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (output.sections && Array.isArray(output.sections)) {
+      return (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-[var(--ol-muted)] px-1">
+            <span className="flex items-center gap-1.5">
+              <ListTree className="w-3.5 h-3.5 text-[var(--ol-accent)]" />
+              Section Breakdown
+            </span>
+            {typeof output.totalItemsCount === 'number' && (
+              <span className="text-[10px] font-mono text-[var(--ol-muted)]">{output.totalItemsCount} items</span>
+            )}
+          </div>
+          {output.sections.map((section: any, sIdx: number) => (
+            <div key={sIdx} className="rounded-lg border border-[var(--ol-border)] bg-[var(--ol-surface)] overflow-hidden">
+              <div className="px-3 py-2 bg-[var(--ol-panel)] border-b border-[var(--ol-border)] text-xs font-bold text-[var(--ol-brand)]">
+                {section.heading}
+              </div>
+              <div className="p-2.5 flex flex-col gap-1.5">
+                {(section.items || []).map((item: any, iIdx: number) => (
+                  <div key={iIdx} className="flex items-start justify-between gap-3 text-xs">
+                    <span className="text-[var(--ol-muted)] font-medium min-w-0 break-words">{item.label}</span>
+                    <span className="text-[var(--ol-brand)] font-semibold text-right min-w-0 break-words font-mono">
+                      {item.value}
+                      {item.notes && <span className="block text-[10px] text-[var(--ol-muted)] font-normal font-body">{item.notes}</span>}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (output.comparisonSummary) {
+      return (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <GitCompare className="w-3.5 h-3.5 text-[var(--ol-accent)]" />
+            <p className="text-sm font-body leading-relaxed">{output.comparisonSummary}</p>
+          </div>
+          {typeof output.alignmentPercentage === 'number' && (
+            <div className="flex items-center gap-2 text-[10px] text-[var(--ol-muted)] font-mono">
+              <span className="uppercase font-bold">Alignment</span>
+              <div className="w-24 h-1.5 rounded-full overflow-hidden bg-[var(--ol-border)]">
+                <div
+                  className="h-full bg-[var(--ol-accent)] transition-all duration-500"
+                  style={{ width: `${output.alignmentPercentage}%` }}
+                />
+              </div>
+              <span>{output.alignmentPercentage}%</span>
+            </div>
+          )}
+          {output.differences && Array.isArray(output.differences) && (
+            <div className="flex flex-col gap-1.5">
+              {output.differences.map((diff: any, idx: number) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between gap-3 p-2 rounded-lg bg-[var(--ol-surface)] border border-[var(--ol-border)] text-xs"
+                >
+                  <span className="font-semibold text-[var(--ol-brand)] min-w-0 truncate">{diff.field}</span>
+                  <span className="font-mono text-[var(--ol-muted)] shrink-0">
+                    {diff.inputVal} vs {diff.benchmarkVal}
+                  </span>
+                  {diff.status && (
+                    <span
+                      className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full border shrink-0 ${
+                        DIFF_STATUS_STYLES[String(diff.status).toLowerCase()] || DIFF_STATUS_STYLES.informational
+                      }`}
+                    >
+                      {diff.status}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (output.actions && Array.isArray(output.actions)) {
+      return (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[var(--ol-muted)] px-1">
+            <ArrowRightCircle className="w-3.5 h-3.5 text-[var(--ol-accent)]" />
+            Recommended Next Steps
+          </div>
+          {output.actions.map((action: any, idx: number) => (
+            <div
+              key={idx}
+              className="flex items-start justify-between gap-3 p-2.5 rounded-lg bg-[var(--ol-surface)] border border-[var(--ol-border)] text-xs"
+            >
+              <span className="text-[var(--ol-brand)] font-medium min-w-0 break-words">{action.task}</span>
+              <div className="flex flex-col items-end gap-1 shrink-0">
+                {action.priority && (
+                  <span
+                    className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full border ${
+                      PRIORITY_STYLES[String(action.priority).toLowerCase()] || PRIORITY_STYLES.low
+                    }`}
+                  >
+                    {action.priority}
+                  </span>
+                )}
+                {(action.owner || action.deadline) && (
+                  <span className="text-[10px] text-[var(--ol-muted)] font-mono whitespace-nowrap">
+                    {[action.owner, action.deadline].filter(Boolean).join(' · ')}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       );
     }

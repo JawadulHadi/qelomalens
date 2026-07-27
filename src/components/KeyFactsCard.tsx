@@ -4,9 +4,10 @@ import { Copy, Check, Hash } from 'lucide-react';
 interface KeyFactsCardProps {
   facts: { key: string; value: string; category?: string }[];
   highlightedKey?: string;
+  onFactClick?: (factKey: string) => void;
 }
 
-export const KeyFactsCard: React.FC<KeyFactsCardProps> = ({ facts, highlightedKey }) => {
+export const KeyFactsCard: React.FC<KeyFactsCardProps> = ({ facts, highlightedKey, onFactClick }) => {
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
 
   const handleCopy = (value: string, idx: number) => {
@@ -39,7 +40,10 @@ export const KeyFactsCard: React.FC<KeyFactsCardProps> = ({ facts, highlightedKe
           return (
             <div
               key={idx}
+              onClick={() => onFactClick && onFactClick(fact.key)}
               className={`p-3 bg-[var(--ol-panel)] rounded-lg border-l-2 border-[var(--ol-border)] transition-all flex items-center justify-between gap-3 ${
+                onFactClick ? 'cursor-pointer' : ''
+              } ${
                 isHighlighted
                   ? 'border-l-[var(--ol-accent)] bg-[var(--ol-accent)]/10 ring-1 ring-[var(--ol-accent)]/30'
                   : 'border-l-[var(--ol-accent)] hover:bg-[var(--ol-surface)]'
@@ -56,7 +60,10 @@ export const KeyFactsCard: React.FC<KeyFactsCardProps> = ({ facts, highlightedKe
 
               <button
                 type="button"
-                onClick={() => handleCopy(fact.value, idx)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCopy(fact.value, idx);
+                }}
                 title="Copy value"
                 className="p-1.5 rounded-md text-[var(--ol-muted)] hover:text-[var(--ol-accent)] hover:bg-[var(--ol-surface)] transition-colors shrink-0 cursor-pointer"
               >

@@ -128,14 +128,38 @@ export class IngestionService {
 
   detectContext(text: string, filename: string): string {
     const lower = (text + ' ' + filename).toLowerCase();
-    if (lower.includes('salary') || lower.includes('payslip') || lower.includes('payroll') || lower.includes('tax') || lower.includes('deduction')) {
-      return 'financial-statement';
+
+    // Checked first and requires two independent signals (or an explicit
+    // filename hint) — resumes routinely mention money, dates, and "tax"
+    // certifications, which would otherwise false-positive as financial or
+    // legal documents further down this function.
+    const resumeFilenameHint = /\b(resume|cv|curriculum[-_ ]?vitae)\b/.test(filename.toLowerCase());
+    const resumeSignals = [
+      'curriculum vitae',
+      'professional experience',
+      'work experience',
+      'employment history',
+      'career objective',
+      'professional summary',
+      'core competencies',
+      'certifications',
+      'linkedin.com/in/',
+      'github.com/',
+      'references available',
+    ];
+    const resumeSignalCount = resumeSignals.filter((signal) => lower.includes(signal)).length;
+    if (resumeFilenameHint || resumeSignalCount >= 2) {
+      return 'resume-cv';
     }
+
     if (lower.includes('agreement') || lower.includes('contract') || lower.includes('clause') || lower.includes('terms')) {
       return 'legal-contract';
     }
     if (lower.includes('patient') || lower.includes('medical') || lower.includes('prescription') || lower.includes('doctor')) {
       return 'medical-record';
+    }
+    if (lower.includes('salary') || lower.includes('payslip') || lower.includes('payroll') || lower.includes('tax') || lower.includes('deduction')) {
+      return 'financial-statement';
     }
     if (lower.includes('invoice') || lower.includes('receipt') || lower.includes('total') || lower.includes('amount')) {
       return 'invoice-receipt';
@@ -145,6 +169,9 @@ export class IngestionService {
 
   suggestCapabilities(envelope: InputEnvelope): string[] {
     const ctx = envelope.meta.detectedContext || 'general-document';
+    if (ctx === 'resume-cv') {
+      return ['SUMMARIZE', 'EXTRACT_FACTS', 'BREAKDOWN', 'NEXT_ACTIONS'];
+    }
     if (ctx === 'financial-statement' || ctx === 'invoice-receipt') {
       return ['SUMMARIZE', 'EXTRACT_FACTS', 'VERDICT', 'BREAKDOWN', 'NEXT_ACTIONS'];
     }

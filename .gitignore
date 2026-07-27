@@ -21,5 +21,9 @@ package-lock.json
 .agents/
 skills-lock.json
 
+# Exported chat transcripts (may contain personal document content)
+qelomalens_chat_*.md
+qelomalens_chat_*.json
+
 .vercel
 .env*

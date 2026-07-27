@@ -3,6 +3,7 @@ import { FileText, FileCode, Image as ImageIcon, ChevronDown, ChevronUp, Layers,
 import { DocumentInfo } from '../types.js';
 import { KeyFactsCard } from './KeyFactsCard.js';
 import { DataVisualizer } from './DataVisualizer.js';
+import { friendlyContextLabel } from '../lib/context-labels.js';
 
 interface DocumentPaneProps {
   doc: DocumentInfo;
@@ -65,8 +66,8 @@ export const DocumentPane: React.FC<DocumentPaneProps> = ({ doc, onReset, highli
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div className="p-2.5 rounded-lg bg-[var(--ol-panel)] border border-[var(--ol-border)]">
           <span className="text-[10px] text-[var(--ol-muted)] block uppercase font-mono font-bold">Context</span>
-          <span className="font-semibold text-[var(--ol-brand)] truncate block mt-0.5">
-            {doc.detectedContext || 'General'}
+          <span className="font-semibold text-[var(--ol-brand)] truncate block mt-0.5" title={doc.detectedContext}>
+            {friendlyContextLabel(doc.detectedContext)}
           </span>
         </div>
         <div className="p-2.5 rounded-lg bg-[var(--ol-panel)] border border-[var(--ol-border)]">

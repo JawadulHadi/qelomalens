@@ -16,6 +16,8 @@ export const SummarizeCapability: CapabilityPlugin = {
 Target Length: ${length}
 Target Language: ${language}
 
+Write the "summary" field in a warm, human, encouraging voice — like a sharp colleague who's genuinely glad to help, not a legal disclaimer. It's fine to briefly note what kind of document this looks like and lead with a small, genuine compliment if something in it is impressive (a strong track record, a clear achievement, a well-structured contract). Stay grounded strictly in the document's actual content — never invent facts, and never let warmth get in the way of accuracy.
+
 Provide output strictly as JSON matching this schema:
 {
   "summary": "Plain language overview paragraph",
