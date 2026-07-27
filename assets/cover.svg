@@ -1,0 +1,67 @@
+<svg width="1600" height="840" viewBox="0 0 1600 840" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="QelomaLens — The lens that sees beyond the page">
+  <title>QelomaLens — The lens that sees beyond the page</title>
+
+  <defs>
+    <clipPath id="frame">
+      <rect x="0" y="0" width="1600" height="840" rx="0" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#frame)">
+    <!-- Background -->
+    <rect x="0" y="0" width="1600" height="840" fill="#F8F7F4" />
+
+    <!-- Editorial top accent bar -->
+    <rect x="0" y="0" width="1600" height="10" fill="#C0532E" />
+
+    <!-- Faint aperture rings motif, right side -->
+    <g transform="translate(1220,430)" fill="none" stroke="#C0532E">
+      <circle r="260" stroke-opacity="0.14" stroke-width="2" />
+      <circle r="205" stroke-opacity="0.22" stroke-width="2" />
+      <circle r="150" stroke-opacity="0.35" stroke-width="2.5" />
+      <circle r="96" stroke-opacity="0.55" stroke-width="3" />
+      <circle r="44" fill="#C0532E" stroke="none" />
+    </g>
+
+    <!-- Aperture blade wedges for lens feel -->
+    <g transform="translate(1220,430)" fill="#C0532E" fill-opacity="0.9">
+      <path d="M 0 -96 L 14 -70 L -14 -70 Z" />
+      <path d="M 83 -48 L 78 -19 L 53 -34 Z" />
+      <path d="M 83 48 L 53 34 L 78 19 Z" />
+      <path d="M 0 96 L -14 70 L 14 70 Z" />
+      <path d="M -83 48 L -78 19 L -53 34 Z" />
+      <path d="M -83 -48 L -53 -34 L -78 -19 Z" />
+    </g>
+
+    <!-- Stylised document page peeking behind the lens -->
+    <g transform="translate(1360,270) rotate(8)">
+      <rect x="0" y="0" width="150" height="196" rx="6" fill="#FFFFFF" stroke="#1A1A1A" stroke-opacity="0.12" stroke-width="2" />
+      <rect x="24" y="34" width="102" height="10" rx="5" fill="#1A1A1A" fill-opacity="0.10" />
+      <rect x="24" y="60" width="102" height="10" rx="5" fill="#1A1A1A" fill-opacity="0.10" />
+      <rect x="24" y="86" width="72" height="10" rx="5" fill="#1A1A1A" fill-opacity="0.10" />
+      <rect x="24" y="128" width="102" height="10" rx="5" fill="#C0532E" fill-opacity="0.35" />
+      <rect x="24" y="154" width="60" height="10" rx="5" fill="#C0532E" fill-opacity="0.35" />
+    </g>
+
+    <!-- Eyebrow pill badge -->
+    <rect x="120" y="238" width="322" height="34" rx="17" fill="#C0532E" />
+    <text x="281" y="260" text-anchor="middle" font-family="'Geist Mono','Courier New',monospace" font-size="13" font-weight="700" letter-spacing="2.4" fill="#FFFFFF">AI DOCUMENT UNDERSTANDING</text>
+
+    <!-- Wordmark -->
+    <text x="118" y="410" font-family="Georgia,'Cormorant Garamond','Times New Roman',serif" font-style="italic" font-weight="600" font-size="128" fill="#1A1A1A">QelomaLens</text>
+
+    <!-- Tagline -->
+    <text x="122" y="466" font-family="Georgia,'Cormorant Garamond','Times New Roman',serif" font-style="italic" font-weight="500" font-size="34" fill="#4A4A46">The lens that sees beyond the page.</text>
+
+    <!-- Divider -->
+    <rect x="122" y="512" width="72" height="3" fill="#C0532E" />
+
+    <!-- Caption row -->
+    <text x="122" y="556" font-family="'Geist Mono','Courier New',monospace" font-size="15" letter-spacing="1.6" fill="#737373">PDF &#183; DOCX &#183; IMAGES &#183; TEXT &#8212; POWERED BY GOOGLE GEMINI</text>
+
+    <!-- Bottom meta strip -->
+    <line x1="120" y1="742" x2="1480" y2="742" stroke="#1A1A1A" stroke-opacity="0.12" stroke-width="1.5" />
+    <text x="120" y="778" font-family="'Geist Mono','Courier New',monospace" font-size="13" letter-spacing="2" fill="#737373">GATEWAY ACTIVE / SESSION STABLE</text>
+    <text x="1480" y="778" text-anchor="end" font-family="'Geist Mono','Courier New',monospace" font-size="13" letter-spacing="2" fill="#737373">OPEN-SOURCE &#183; MIT LICENSED</text>
+  </g>
+</svg>

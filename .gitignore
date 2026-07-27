@@ -1,0 +1,18 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Vercel
+.vercel
+
+# Supabase CLI local state (config.toml and migrations are committed)
+supabase/.branches
+supabase/.temp
+
+# npm lockfile — bun.lock is canonical for this project
+package-lock.json
