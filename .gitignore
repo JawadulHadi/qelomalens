@@ -17,5 +17,9 @@ supabase/.temp
 # npm lockfile — bun.lock is canonical for this project
 package-lock.json
 
+# Local AI-agent tooling (skill docs, not application code)
+.agents/
+skills-lock.json
+
 .vercel
 .env*

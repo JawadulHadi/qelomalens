@@ -11,11 +11,6 @@ import { getSupabaseServerClient } from '../lib/supabase.server.js';
 // configure Supabase for any deployment with more than one function instance.
 const envelopeStore = new Map<string, InputEnvelope>();
 
-interface StoredEnvelope {
-  envelope: InputEnvelope;
-  userId?: string;
-}
-
 export class IngestionService {
   async processFile(
     fileBuffer: Buffer,
@@ -111,8 +106,16 @@ export class IngestionService {
       .eq('id', inputId)
       .maybeSingle();
 
-    if (error || !data) {
-      return undefined;
+    if (error) {
+      console.warn('[Ingestion] Supabase lookup failed, checking in-memory fallback store:', error.message);
+      return envelopeStore.get(inputId);
+    }
+
+    if (!data) {
+      // Not in Supabase — it may have been written to the in-memory
+      // fallback store instead (see saveEnvelope), e.g. because the
+      // input_envelopes table doesn't exist yet.
+      return envelopeStore.get(inputId);
     }
 
     const row = data as { payload: InputEnvelope; user_id: string | null };
