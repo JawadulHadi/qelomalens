@@ -18,8 +18,10 @@ or raw bytes), normalizes it into a canonical **Input Envelope**, and runs
 self-describing **capabilities** on demand — powered by Google Gemini with
 deterministic rule-based fallbacks that mean it never hard-fails.
 
-**Live demo:** _add your deployed Vercel URL here after following
-[DEPLOYMENT.md](./DEPLOYMENT.md)._
+**Live demo:** [qelomalens.vercel.app](https://qelomalens.vercel.app)
+— running today with rule-based fallbacks only (no `GEMINI_API_KEY` or
+Supabase configured yet on the deployment; see
+[DEPLOYMENT.md](./DEPLOYMENT.md) to enable the full AI + auth experience).
 
 ---
 
