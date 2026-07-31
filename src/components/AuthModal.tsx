@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Shield, Mail, Lock, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth.js';
+import { Logo } from './Logo.js';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -87,9 +88,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="p-4 border-b border-[var(--ol-border)] flex items-center justify-between bg-[var(--ol-sidebar)]">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[var(--ol-accent)] text-white font-bold italic flex items-center justify-center text-xs shrink-0">
-              QL
-            </div>
+            <Logo size={32} className="rounded-lg shrink-0" />
             <div>
               <h3 className="font-head font-bold text-sm text-[var(--ol-brand)]">QelomaLens Account</h3>
               <p className="text-[10px] text-[var(--ol-muted)]">Secured by Supabase Auth</p>

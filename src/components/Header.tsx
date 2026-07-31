@@ -2,6 +2,7 @@ import React from 'react';
 import { Layers, PanelRight, MessageSquare, Moon, Sun, HelpCircle, User } from 'lucide-react';
 import { ShellMode } from '../types.js';
 import { useAuth } from '../hooks/useAuth.js';
+import { Logo } from './Logo.js';
 
 interface HeaderProps {
   shell: ShellMode;
@@ -23,9 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="h-16 border-b px-4 sm:px-6 flex items-center justify-between bg-[var(--ol-panel)] border-[var(--ol-border)] transition-colors shrink-0">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-[var(--ol-accent)] rounded-md flex items-center justify-center font-bold text-white italic font-head text-lg shadow-sm">
-          Q
-        </div>
+        <Logo size={32} animated className="rounded-lg shadow-sm shrink-0" />
         <div className="flex items-center gap-2">
           <span className="font-head italic font-semibold text-2xl tracking-tight text-[var(--ol-brand)]">
             QelomaLens

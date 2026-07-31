@@ -6,7 +6,7 @@ describes how the pieces fit together and the decisions behind them.
 
 ## Request flow
 
-```
+```markdown
  Browser (React)
    │  fetch('/v1/...', { headers: { 'X-API-Key', 'Authorization' } })
    ▼
@@ -40,7 +40,7 @@ This is the core design principle carried through the whole stack — every
 external dependency has a deterministic fallback:
 
 | Layer | Primary | Fallback | Controlled by |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Capability execution | Gemini 2.5 Flash | Rule-based plugin logic | `AI_ENABLED`, `GEMINI_API_KEY` |
 | Input envelope persistence | Supabase Postgres | In-process `Map` | `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` |
 
@@ -80,7 +80,7 @@ ever exposed through Supabase's Data API.
 ## Frontend
 
 - `src/hooks/useAuth.tsx` wraps `@supabase/supabase-js` auth (email/password
-  + magic link) behind a React context, exposed app-wide via `AuthProvider`
+  and magic link) behind a React context, exposed app-wide via `AuthProvider`
   in `src/main.tsx`.
 - `src/api/client.ts` attaches both the demo `X-API-Key` and, when signed in,
   the current Supabase access token as `Authorization: Bearer`.
@@ -91,7 +91,7 @@ ever exposed through Supabase's Data API.
 
 ## Deployment topology
 
-```
+```markdown
               ┌─────────────────────────────┐
 Browser  ───▶ │ Vercel                      │
               │  • dist/  (static, Vite)    │

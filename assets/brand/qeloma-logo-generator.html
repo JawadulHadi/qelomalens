@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qeloma — Animated Logo</title>
+<style>
+  :root{
+    --brand:#2C3E50; --brand-hi:#3B5268; --brand-lo:#1B2733;
+    --accent:#C0532E; --accent-hi:#E0743F; --accent-lo:#8E3A1E;
+    --surface:#F2F0ED; --panel:#FFFFFF; --border:#D8D4CF; --muted:#6B6B6B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--surface);color:var(--brand);padding:32px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:28px;letter-spacing:-.4px;margin-bottom:2px}
+  h1 .v{color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:26px}
+  .stage{background:var(--panel);border:1px solid var(--border);border-radius:22px;padding:44px;display:flex;gap:44px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:22px}
+  .hero{width:260px;height:260px;filter:drop-shadow(0 18px 30px rgba(44,62,80,.22))}
+  .lockup{display:flex;flex-direction:column;gap:18px;min-width:220px}
+  .row{display:flex;align-items:center;gap:14px}
+  .row .mark{width:56px;height:56px;filter:drop-shadow(0 6px 10px rgba(44,62,80,.2))}
+  .row .txt{font-family:Georgia,serif;font-weight:700;font-size:26px;color:var(--brand)}
+  .row .txt .v{color:var(--accent)}
+  .row.dark{background:var(--brand-lo);padding:14px 18px;border-radius:14px}
+  .row.dark .txt{color:#fff}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+  button{font:inherit;font-size:13px;background:var(--panel);color:var(--brand);border:1px solid var(--border);border-radius:9px;padding:9px 15px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:7px}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  button.on:hover{color:#fff}
+  button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  button.primary:hover{background:var(--accent-lo);color:#fff;border-color:var(--accent-lo)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px;margin-bottom:26px}
+  .cell{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center}
+  .cell .box{display:flex;align-items:center;justify-content:center;height:96px}
+  .cell .lab{font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:.06em}
+  .note{font-size:13px;color:var(--muted);line-height:1.6;background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:22px}
+  .fav{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
+  .fav .f{text-align:center;cursor:pointer}
+  .fav .f:hover .lab{color:var(--accent)}
+  .fav .lab{font-size:10px;color:var(--muted);margin-top:6px}
+  h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:8px 0 12px;font-weight:600}
+  .hint{font-size:11px;color:var(--muted);margin:-6px 0 20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Qeloma<span class="v"> Verdict</span></h1>
+  <div class="sub">Animated Logo · 3D-styled · dynamic flow</div>
+
+  <div class="controls">
+    <button id="b-orbit" class="on">Orbit</button>
+    <button id="b-pulse" class="on">Core pulse</button>
+    <button id="b-scan" class="on">Lens scan</button>
+    <button id="b-download">⤓ Master SVG</button>
+    <button id="b-png" class="primary">⤓ PNG @512</button>
+    <button id="b-all" class="primary">⤓ All PNGs (zip)</button>
+  </div>
+
+  <div class="stage">
+    <div id="hero" class="hero"></div>
+    <div class="lockup">
+      <div class="row"><div class="mark" data-mark></div><div class="txt">Qeloma<span class="v"> Verdict</span></div></div>
+      <div class="row"><div class="mark" data-mark></div><div class="txt">Qeloma<span class="v"> Lens</span></div></div>
+      <div class="row dark"><div class="mark" data-mark></div><div class="txt">Qeloma<span class="v"> Shift</span></div></div>
+    </div>
+  </div>
+
+  <h2>App icon — resolution set</h2>
+  <div class="fav" id="favrow"></div>
+  <div class="hint">Click any size to download that PNG individually.</div>
+
+  <h2>On-surface variants</h2>
+  <div class="grid" id="variants"></div>
+
+  <div class="note">The mark evolves your original loupe/target: a beveled slate tile, an orbiting focus-ring, a pulsing terracotta core, and a periodic scan sweep across the lens — calm and precise, with understanding-in-motion. Motion is pure SVG (SMIL), so the web logo animates with zero JS and the exported PNGs are clean static frames for favicons, app icons, and store assets.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+function qelomaSVG({size=256, animated=true, dark=false}={}){
+  const A=animated;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="Qeloma logo">
+  <defs>
+    <linearGradient id="g-tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="${dark?'#22303F':'#3B5268'}"/>
+      <stop offset="1" stop-color="${dark?'#0B1118':'#1B2733'}"/>
+    </linearGradient>
+    <linearGradient id="g-core" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E0743F"/>
+      <stop offset="1" stop-color="#8E3A1E"/>
+    </linearGradient>
+    <radialGradient id="g-sheen" cx="0.32" cy="0.28" r="0.75">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="g-ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.45"/>
+    </linearGradient>
+    <filter id="f-soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="0.7"/>
+    </filter>
+    <filter id="f-glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="clip-tile"><rect x="6" y="6" width="88" height="88" rx="20"/></clipPath>
+  </defs>
+
+  <rect x="6" y="9" width="88" height="88" rx="20" fill="${dark?'#05080C':'#0C141C'}"/>
+  <rect x="6" y="6" width="88" height="88" rx="20" fill="url(#g-tile)"/>
+  <g clip-path="url(#clip-tile)">
+    <rect x="6" y="6" width="88" height="88" fill="url(#g-sheen)"/>
+    <rect x="6" y="70" width="88" height="28" fill="#000000" opacity="0.18"/>
+    <rect class="a-scan" x="-30" y="6" width="26" height="88" fill="#E0743F" opacity="0">
+      ${A?`<animate attributeName="x" values="-30;100" dur="3.6s" begin="0.4s" repeatCount="indefinite" keyTimes="0;1" calcMode="spline" keySplines="0.4 0 0.2 1"/>
+      <animate attributeName="opacity" values="0;0.18;0" dur="3.6s" begin="0.4s" repeatCount="indefinite"/>`:''}
+    </rect>
+  </g>
+
+  <g transform="translate(50 50)">
+    <g class="a-orbit">
+      ${A?`<animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="14s" repeatCount="indefinite"/>`:''}
+      <circle r="26" fill="none" stroke="url(#g-ring)" stroke-width="2.4" stroke-opacity="0.30" stroke-dasharray="120 40"/>
+      <circle cx="0" cy="-26" r="2.6" fill="#fff" opacity="0.9"/>
+    </g>
+    <circle r="20" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-opacity="0.92" filter="url(#f-soft)"/>
+    <circle r="20" fill="${dark?'#0B1620':'#16222E'}" fill-opacity="0.35"/>
+    <g class="a-pulse" filter="url(#f-glow)">
+      <circle r="8.5" fill="url(#g-core)">
+        ${A?`<animate attributeName="r" values="7.6;9.4;7.6" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>`:''}
+      </circle>
+      <circle r="8.5" fill="none" stroke="#E0743F" stroke-width="1.4" opacity="0">
+        ${A?`<animate attributeName="r" values="8.5;15" dur="2.4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0" dur="2.4s" repeatCount="indefinite"/>`:''}
+      </circle>
+      <circle cx="-2.2" cy="-2.2" r="3" fill="#fff" opacity="0.55"/>
+    </g>
+    <path d="M14.5 14.5 L30 30" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-opacity="0.92"/>
+    <path d="M14.5 14.5 L30 30" stroke="#C0532E" stroke-width="2" stroke-linecap="round" stroke-opacity="0.85"/>
+  </g>
+
+  <rect class="a-pixel" x="14" y="14" width="7" height="7" rx="1.5" fill="#C0532E">
+    ${A?`<animate attributeName="opacity" values="1;0.35;1" dur="2.4s" repeatCount="indefinite"/>`:''}
+  </rect>
+</svg>`;
+}
+
+const state={orbit:true,pulse:true,scan:true};
+
+function render(){
+  document.getElementById('hero').innerHTML=qelomaSVG({size:260,animated:true});
+  document.querySelectorAll('[data-mark]').forEach(m=>{m.innerHTML=qelomaSVG({size:56,animated:true,dark:!!m.closest('.dark')});});
+  const sizes=[16,32,48,64,128,256,512];
+  document.getElementById('favrow').innerHTML=sizes.map(s=>`<div class="f" data-size="${s}"><div style="width:${Math.min(s,72)}px;height:${Math.min(s,72)}px">${qelomaSVG({size:Math.min(s,72),animated:false})}</div><div class="lab">${s}px</div></div>`).join('');
+  document.querySelectorAll('.f').forEach(f=>f.onclick=()=>downloadPNG(parseInt(f.dataset.size,10)));
+  const V=[['Light',false,false],['Dark tile',false,true],['Animated',true,false]];
+  document.getElementById('variants').innerHTML=V.map(([lab,an,dk])=>`<div class="cell"><div class="box"><div style="width:80px;height:80px">${qelomaSVG({size:80,animated:an,dark:dk})}</div></div><div class="lab">${lab}</div></div>`).join('');
+  applyToggles();
+}
+
+// per-toggle motion: pause/run the SMIL groups by class, without re-rendering
+function applyToggles(){
+  document.querySelectorAll('#hero svg, [data-mark] svg').forEach(svg=>{
+    const set=(sel,on)=>svg.querySelectorAll(sel+' animate, '+sel+' animateTransform, '+sel+'animate, '+sel+'animateTransform').forEach(a=>{try{on?a.beginElement():a.endElement();}catch(e){}});
+    toggleClass(svg,'.a-orbit',state.orbit);
+    toggleClass(svg,'.a-scan',state.scan);
+    toggleClass(svg,'.a-pulse',state.pulse);
+    toggleClass(svg,'.a-pixel',state.pulse);
+  });
+}
+function toggleClass(svg,sel,on){
+  svg.querySelectorAll(sel).forEach(g=>{
+    g.querySelectorAll('animate,animateTransform').forEach(a=>{
+      if(on){ a.removeAttribute('begin'); try{a.beginElement();}catch(e){} a.style.display=''; }
+      else { try{a.endElement();}catch(e){} a.style.display='none'; }
+    });
+    if(!on && sel==='.a-scan') g.setAttribute('opacity','0');
+    if(!on && sel==='.a-pulse'){ /* leave core visible at rest */ }
+  });
+}
+
+function bindToggle(id,key){const b=document.getElementById(id);b.onclick=()=>{state[key]=!state[key];b.classList.toggle('on',state[key]);render();};}
+bindToggle('b-orbit','orbit');bindToggle('b-pulse','pulse');bindToggle('b-scan','scan');
+
+function svgBlob(str){return new Blob([str],{type:'image/svg+xml;charset=utf-8'});}
+function trigger(href,name){const a=document.createElement('a');a.href=href;a.download=name;document.body.appendChild(a);a.click();a.remove();}
+
+document.getElementById('b-download').onclick=()=>{
+  trigger(URL.createObjectURL(svgBlob(qelomaSVG({size:512,animated:true}))),'qeloma-logo-animated.svg');
+};
+
+// rasterize a STATIC svg string to a PNG blob at n×n
+function rasterize(svgStr,n){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(svgBlob(svgStr));
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');c.width=n;c.height=n;
+      const ctx=c.getContext('2d');ctx.clearRect(0,0,n,n);ctx.drawImage(img,0,0,n,n);
+      URL.revokeObjectURL(url);
+      c.toBlob(b=>b?resolve(b):reject(new Error('toBlob failed')),'image/png');
+    };
+    img.onerror=e=>{URL.revokeObjectURL(url);reject(e);};
+    img.src=url;
+  });
+}
+
+async function downloadPNG(n){
+  const svg=qelomaSVG({size:n,animated:false});
+  const blob=await rasterize(svg,n);
+  trigger(URL.createObjectURL(blob),`qeloma-icon-${n}.png`);
+}
+document.getElementById('b-png').onclick=()=>downloadPNG(512);
+
+document.getElementById('b-all').onclick=async()=>{
+  const btn=document.getElementById('b-all');const old=btn.textContent;btn.textContent='Rendering…';
+  try{
+    const zip=new JSZip();
+    const light=[16,32,48,64,128,256,512,1024];
+    for(const n of light){ zip.file(`png/qeloma-icon-${n}.png`, await rasterize(qelomaSVG({size:n,animated:false}),n)); }
+    for(const n of [256,512,1024]){ zip.file(`png-dark/qeloma-icon-dark-${n}.png`, await rasterize(qelomaSVG({size:n,animated:false,dark:true}),n)); }
+    zip.file('svg/qeloma-logo-animated.svg', qelomaSVG({size:512,animated:true}));
+    zip.file('svg/qeloma-logo-static.svg', qelomaSVG({size:512,animated:false}));
+    zip.file('svg/qeloma-logo-animated-dark.svg', qelomaSVG({size:512,animated:true,dark:true}));
+    zip.file('svg/qeloma-logo-static-dark.svg', qelomaSVG({size:512,animated:false,dark:true}));
+    const out=await zip.generateAsync({type:'blob'});
+    trigger(URL.createObjectURL(out),'qeloma-icons.zip');
+  }catch(e){alert('Export failed: '+e.message);}
+  btn.textContent=old;
+};
+
+render();
+</script>
+</body>
+</html>

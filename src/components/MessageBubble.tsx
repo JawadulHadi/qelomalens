@@ -23,6 +23,37 @@ const titleCase = (value: string): string =>
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 
+const renderPrimitive = (value: unknown): string => {
+  if (value === null || value === undefined) return '—';
+  if (typeof value === 'object') return Object.values(value as object).map(renderPrimitive).join(', ');
+  return String(value);
+};
+
+/**
+ * Last-resort renderer for any capability output that doesn't match one of
+ * the known schemas above (an unexpected Gemini response shape, a plugin
+ * error payload, a future capability). Always plain readable text/lists —
+ * never a raw JSON dump, no matter what shape shows up.
+ */
+const renderUnknownOutput = (output: Record<string, any>): React.ReactNode => (
+  <div className="flex flex-col gap-2 text-xs font-body">
+    {Object.entries(output).map(([key, value]) => (
+      <div key={key} className="flex flex-col gap-1">
+        <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--ol-muted)]">{titleCase(key)}</span>
+        {Array.isArray(value) ? (
+          <ul className="list-disc pl-5 flex flex-col gap-0.5 text-[var(--ol-brand)] dark:text-gray-200">
+            {value.map((item, idx) => (
+              <li key={idx}>{renderPrimitive(item)}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-[var(--ol-brand)] dark:text-gray-200 leading-relaxed">{renderPrimitive(value)}</p>
+        )}
+      </div>
+    ))}
+  </div>
+);
+
 const VERDICT_STYLES: Record<string, { badge: string; Icon: typeof ShieldCheck }> = {
   correct: { badge: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30', Icon: ShieldCheck },
   fair: { badge: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30', Icon: ShieldCheck },
@@ -296,11 +327,16 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, onCitatio
       );
     }
 
-    return (
-      <pre className="text-xs font-mono p-2 rounded bg-[var(--ol-surface)] border border-[var(--ol-border)] overflow-x-auto">
-        {JSON.stringify(output, null, 2)}
-      </pre>
-    );
+    if (typeof output.error === 'string') {
+      return (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500 text-xs">
+          <AlertOctagon className="w-4 h-4 shrink-0 mt-0.5" />
+          <span>{output.error}</span>
+        </div>
+      );
+    }
+
+    return renderUnknownOutput(output);
   };
 
   return (

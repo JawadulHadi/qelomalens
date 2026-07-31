@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/// <reference types="react" />
+import { useEffect, useState } from "react";
 import { Header } from "./components/Header.js";
 import { DropZone } from "./components/DropZone.js";
 import { LandingHero } from "./components/LandingHero.js";
@@ -88,7 +89,7 @@ export default function App() {
 
   // Toggle dark mode class on root html element
   const handleToggleDark = () => {
-    setIsDark((prev) => !prev);
+    setIsDark((prev: boolean) => !prev);
   };
 
   // Handle session selection

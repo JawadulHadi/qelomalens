@@ -1,16 +1,8 @@
-<p align="center">
-  <img src="assets/cover.svg" alt="QelomaLens — The lens that sees beyond the page" width="100%" />
-</p>
-
-<p align="center">
-  <a href="./LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-C0532E.svg"></a>
-  <img alt="Node >= 20" src="https://img.shields.io/badge/node-%3E%3D20-1A1A1A.svg">
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.8-1A1A1A.svg">
-  <img alt="Built with Supabase" src="https://img.shields.io/badge/backend-Supabase-3ECF8E.svg">
-  <img alt="Deployed on Vercel" src="https://img.shields.io/badge/frontend-Vercel-000000.svg">
-</p>
-
 # QelomaLens
+
+![QelomaLens — The lens that sees beyond the page](assets/cover.svg)
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-C0532E.svg)](./LICENSE) ![Node >= 20](<https://img.shields.io/badge/node-%3E%3D20-1A1A1A.svg>) ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-1A1A1A.svg) ![Built with Supabase](https://img.shields.io/badge/backend-Supabase-3ECF8E.svg) ![Deployed on Vercel](https://img.shields.io/badge/frontend-Vercel-000000.svg)
 
 QelomaLens is a standalone, language-agnostic, capability-driven AI
 understanding service. It ingests any input (PDF, DOCX, PNG, JPG, plain text,
@@ -18,10 +10,9 @@ or raw bytes), normalizes it into a canonical **Input Envelope**, and runs
 self-describing **capabilities** on demand — powered by Google Gemini with
 deterministic rule-based fallbacks that mean it never hard-fails.
 
-**Live demo:** [qelomalens.vercel.app](https://qelomalens.vercel.app)
-— running today with rule-based fallbacks only (no `GEMINI_API_KEY` or
-Supabase configured yet on the deployment; see
-[DEPLOYMENT.md](./DEPLOYMENT.md) to enable the full AI + auth experience).
+**Live demo:** [qelomalens.vercel.app](https://qelomalens.vercel.app) —
+running with real Gemini AI and Supabase-backed auth + persistence. See
+[DEPLOYMENT.md](./DEPLOYMENT.md) to deploy your own instance.
 
 ---
 
@@ -48,17 +39,17 @@ Supabase configured yet on the deployment; see
 
 ## Tech stack
 
-| Layer | Choice |
-|---|---|
-| Frontend | React 19 + Vite 6 + Tailwind CSS 4 |
-| Backend | Express 4 (Node), deployed as a Vercel serverless function |
-| AI | Google Gemini (`@google/genai`), with rule-based fallbacks |
-| Auth + DB | Supabase (Postgres + Auth), free tier |
-| Hosting | Vercel (Hobby, free tier) |
+| Layer     | Choice                                                       |
+| --------- | ------------------------------------------------------------ |
+| Frontend  | React 19 + Vite 6 + Tailwind CSS 4                           |
+| Backend   | Express 4 (Node), deployed as a Vercel serverless function   |
+| AI        | Google Gemini (`@google/genai`), with rule-based fallbacks |
+| Auth + DB | Supabase (Postgres + Auth), free tier                        |
+| Hosting   | Vercel (Hobby, free tier)                                    |
 
 ## Project layout
 
-```
+```markdown
 /
 ├── api/index.ts              # Vercel serverless entrypoint (reuses src/app.ts)
 ├── server.ts                 # Local dev server (Vite middleware + same app)
@@ -104,13 +95,13 @@ and fill in. Nothing is required to run the app locally except
 `GEMINI_API_KEY` (and even that is optional: without it, every capability
 runs its rule-based fallback instead of calling Gemini).
 
-| Variable | Required | Purpose |
-|---|---|---|
-| `GEMINI_API_KEY` | optional | Enables the real AI path; falls back to rule-based logic without it |
-| `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | optional | Server-side persistence for uploaded documents — **required** for a serverless deployment to work correctly across requests |
-| `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` | optional | Enables real sign-in/sign-up in the browser |
-| `MAX_FILE_SIZE_MB` | optional | Upload size limit — see the Vercel-specific note in [DEPLOYMENT.md](./DEPLOYMENT.md) |
-| `SINGLE_TENANT_MODE`, `AI_ENABLED`, `DEFAULT_TENANT_ID`, `DEFAULT_TENANT_KEY` | optional | Tenancy/demo defaults, see `src/config/index.ts` |
+| Variable                                                                              | Required | Purpose                                                                                                                           |
+| ------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `GEMINI_API_KEY`                                                                    | optional | Enables the real AI path; falls back to rule-based logic without it                                                               |
+| `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`                                      | optional | Server-side persistence for uploaded documents — **required** for a serverless deployment to work correctly across requests |
+| `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`                                    | optional | Enables real sign-in/sign-up in the browser                                                                                       |
+| `MAX_FILE_SIZE_MB`                                                                  | optional | Upload size limit — see the Vercel-specific note in [DEPLOYMENT.md](./DEPLOYMENT.md)                                               |
+| `SINGLE_TENANT_MODE`, `AI_ENABLED`, `DEFAULT_TENANT_ID`, `DEFAULT_TENANT_KEY` | optional | Tenancy/demo defaults, see `src/config/index.ts`                                                                                 |
 
 ## Deploying your own copy
 
@@ -154,6 +145,8 @@ curl -s -X POST http://localhost:3000/v1/inputs/<INPUT_ID>/chat \
   -H "X-API-Key: sk_live_qelomalens_default" \
   -d '{"message": "What is my net pay after all deductions?"}'
 ```
+
+Swap `localhost:3000` for `https://qelomalens.vercel.app` to run these against the live deployment instead.
 
 ## Contributing
 
